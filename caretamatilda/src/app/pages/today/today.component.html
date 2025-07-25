@@ -1,44 +1,104 @@
 <div class="container">
   <h2>📅 Tarefas do Dia</h2>
 
+  
+
+
+<div class="controle-data">
+  <label for="data">Data:</label>
+  <input type="date" id="data" [(ngModel)]="dataSelecionada" (change)="aplicarResetPorData()" />
+</div>  
+  <!-- ➕ Adicionar tarefa -->
   <div class="nova-tarefa">
+    <select [(ngModel)]="grupoSelecionado">
+      <option *ngFor="let grupo of grupos">{{ grupo }}</option>
+    </select>
     <input [(ngModel)]="novaTarefa" placeholder="Digite nova tarefa..." />
     <button (click)="adicionarTarefa()">➕ Adicionar</button>
+    <button (click)="adicionarGrupo()">📂 Novo Grupo</button>
   </div>
 
-  <div cdkDropList (cdkDropListDropped)="reordenar($event)">
-    <div *ngFor="let tarefa of tarefas; let i = index" cdkDrag class="tarefa" [class.concluida]="tarefa.feito">
-  <div *ngIf="!tarefa.editando" (dblclick)="editarTarefa(i)">
-    <span>{{ tarefa.icone }} {{ tarefa.texto }}</span>
+  <!-- 📦 Visualização por grupo -->
+  <div *ngFor="let grupo of grupos">
+    <div class="accordion-header">
+      <div class="header-top" (click)="toggleGrupo(grupo)">
+        <h3>
+          {{ grupo }} ({{ getConcluidasDoGrupo(grupo) }} / {{ getTotalDoGrupo(grupo) }} concluídas)
+        </h3>
+        <button (click)="excluirGrupo(grupo)" title="Excluir grupo" class="excluir-grupo">🗑️</button>
+      </div>
+      <div class="progresso-barra">
+        <div class="progresso-preenchido" [style.width.%]="getProgressoDoGrupo(grupo)"></div>
+      </div>
+    </div>
+
+    <div class="accordion-body" *ngIf="gruposVisiveis[grupo]">
+      <div
+        cdkDropList
+        [id]="grupo"
+        [cdkDropListData]="getTarefasDoGrupo(grupo)"
+        [cdkDropListConnectedTo]="grupos"
+        (cdkDropListDropped)="aoSoltar($event, grupo)"
+        (cdkDropListEntered)="grupoDestacado = grupo"
+        (cdkDropListExited)="grupoDestacado = null"
+        [class.destacado]="grupoDestacado === grupo"
+      >
+        <div *ngIf="getTarefasDoGrupo(grupo).length === 0" class="drop-placeholder">
+          ⬇️ Arraste uma tarefa aqui
+        </div>
+
+        <div
+          *ngFor="let tarefa of getTarefasDoGrupo(grupo)"
+          cdkDrag
+          [cdkDragData]="tarefa"
+          class="tarefa"
+          [class.concluida]="tarefa.feito"
+          [attr.title]="tarefa.descricao || null"
+        >
+          <div
+            *ngIf="!tarefa.editando"
+            (dblclick)="editarTarefaPorId(tarefa.id)"
+            [attr.title]="tarefa.descricao || null"
+          >
+            <span>{{ tarefa.icone }} {{ tarefa.texto }}</span>
+          </div>
+
+          <div *ngIf="tarefa.editando" class="edicao">
+            <select (change)="selecionarEmojiPorId(tarefa.id, $event)" [value]="tarefa.icone">
+              <option *ngFor="let emoji of emojiOptions" [value]="emoji">{{ emoji }}</option>
+            </select>
+            <input
+              [ngModel]="tarefa.texto"
+              (ngModelChange)="atualizarTexto(tarefa.id, $event)"
+              (keydown.enter)="finalizarEdicao(tarefa.id)"
+              (keydown.escape)="cancelarEdicao(tarefa.id)"
+              (blur)="finalizarEdicao(tarefa.id)"
+              autofocus
+            />
+          </div>
+
+          <div class="botoes">
+            <button (click)="alternarStatusPorId(tarefa.id)">
+              {{ tarefa.feito ? '↩️' : '✔️' }}
+            </button>
+            
+            <button (click)="abrirModalDescricao(tarefa.id)" title="Ver ou editar descrição">💬</button>
+            <button (click)="excluirTarefaPorId(tarefa.id)">🗑️</button>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
-
-  <div *ngIf="tarefa.editando">
-   <select (change)="selecionarEmoji(i, $event)" [value]="tarefa.icone">
-  <option *ngFor="let emoji of emojiOptions" [value]="emoji">{{ emoji }}</option>
-</select>
-
-
-
-  <input
-    [(ngModel)]="tarefa.texto"
-    (keydown)="salvarEdicaoEnter($event, i)"
-    (blur)="cancelarEdicaoBlur(i)"
-    autofocus
-  />
 </div>
 
-
-
-
-  <div class="botoes">
-    <button (click)="alternarStatus(i)">
-      {{ tarefa.feito ? '↩️ Desfazer' : '✔️ Feito' }}
-    </button>
-    <button (click)="excluirTarefa(i)">🗑️</button>
+<!-- 💬 Modal de descrição -->
+<div class="modal-overlay" *ngIf="descricaoModalAberta">
+  <div class="modal">
+    <h3>📝 Descrição da tarefa</h3>
+    <textarea [(ngModel)]="descricaoTemporaria" rows="6" placeholder="Digite uma descrição detalhada..."></textarea>
+    <div class="modal-botoes">
+      <button (click)="salvarDescricaoModal()">💾 Salvar</button>
+      <button (click)="fecharModalDescricao()">❌ Cancelar</button>
+    </div>
   </div>
 </div>
-
-  </div>
-</div>
-
-
