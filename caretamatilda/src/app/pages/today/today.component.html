@@ -1,0 +1,44 @@
+<div class="container">
+  <h2>📅 Tarefas do Dia</h2>
+
+  <div class="nova-tarefa">
+    <input [(ngModel)]="novaTarefa" placeholder="Digite nova tarefa..." />
+    <button (click)="adicionarTarefa()">➕ Adicionar</button>
+  </div>
+
+  <div cdkDropList (cdkDropListDropped)="reordenar($event)">
+    <div *ngFor="let tarefa of tarefas; let i = index" cdkDrag class="tarefa" [class.concluida]="tarefa.feito">
+  <div *ngIf="!tarefa.editando" (dblclick)="editarTarefa(i)">
+    <span>{{ tarefa.icone }} {{ tarefa.texto }}</span>
+  </div>
+
+  <div *ngIf="tarefa.editando">
+   <select (change)="selecionarEmoji(i, $event)" [value]="tarefa.icone">
+  <option *ngFor="let emoji of emojiOptions" [value]="emoji">{{ emoji }}</option>
+</select>
+
+
+
+  <input
+    [(ngModel)]="tarefa.texto"
+    (keydown)="salvarEdicaoEnter($event, i)"
+    (blur)="cancelarEdicaoBlur(i)"
+    autofocus
+  />
+</div>
+
+
+
+
+  <div class="botoes">
+    <button (click)="alternarStatus(i)">
+      {{ tarefa.feito ? '↩️ Desfazer' : '✔️ Feito' }}
+    </button>
+    <button (click)="excluirTarefa(i)">🗑️</button>
+  </div>
+</div>
+
+  </div>
+</div>
+
+

@@ -1,0 +1,118 @@
+.container {
+  padding: 20px;
+  max-width: 600px;
+  margin: auto;
+}
+
+.nova-tarefa {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.nova-tarefa input {
+  flex: 1;
+  padding: 8px;
+  font-size: 1em;
+}
+
+.nova-tarefa button {
+  padding: 8px 12px;
+  font-size: 1em;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+}
+
+li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  margin-bottom: 10px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+}
+
+li.concluida {
+  background-color: #e0e0e0;
+  color: #555;
+}
+
+.botoes {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+
+button {
+  background-color: #1976d2;
+  color: white;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9em;
+}
+
+button:hover {
+  background-color: #1565c0;
+}
+
+button:disabled {
+  background-color: #9e9e9e;
+}
+
+.tarefa {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  margin-bottom: 10px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  cursor: move;
+  transition: background-color 0.3s ease;
+}
+
+.tarefa.cdk-drag-preview {
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.tarefa.concluida {
+  background-color: #e0e0e0;
+  color: #555;
+}
+
+.tarefa.cdk-drag-placeholder {
+  opacity: 0;
+}
+
+input {
+  font-size: 1em;
+  padding: 6px;
+  width: 100%;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+
+.edicao {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+select {
+  font-size: 1.2em;
+  padding: 6px;
+  border-radius: 6px;
+}
